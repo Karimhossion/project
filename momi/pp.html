@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Dashboard — E-commerce App</title>
+  <style>
+    :root {
+      --accent: #4c63d2;
+      --bg: #dfe6ff;
+      --radius: 12px;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: #101c81;
+      transition: background 0.4s ease;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      background: var(--accent);
+      color: #fff;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .photo-upload {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .photo-upload input {
+      padding: 4px;
+      border-radius: 6px;
+    }
+
+    .photo-upload img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #fff;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      height: calc(100vh - 64px);
+    }
+
+    nav {
+      background: #2e397f;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    nav button {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      background: #f1f1f1;
+      cursor: pointer;
+      text-align: left;
+      font-weight: 500;
+      transition: all .3s;
+    }
+
+    nav button:hover {
+      background: var(--accent);
+      color: #fff;
+      transform: translateX(4px);
+    }
+
+    main {
+      padding: 24px;
+      overflow: auto;
+    }
+
+    .card {
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      margin-bottom: 20px;
+      background: white;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid #eee;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background: #fafafa;
+    }
+
+    input,
+    select {
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .action-btns button {
+      margin-right: 6px;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .edit {
+      background: #6ab04c;
+      color: white;
+    }
+
+    .delete {
+      background: #eb4d4b;
+      color: white;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+    }
+
+    .stat-card {
+      background: var(--accent);
+      color: white;
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div>
+      <h1>🛍️ Admin Dashboard</h1>
+      <div>Welcome, Admin</div>
+      <div class="photo-upload">
+        <input type="file" id="uploadPhoto" accept="image/*">
+        <img id="preview" src="" alt="Profile Photo">
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <nav>
+      <button onclick="showSection('dashboard','#c8d7ff','#4c63d2')">📊 Dashboard</button>
+      <button onclick="showSection('category','#ffdbdb','#d73b72')">🧾 Add Category</button>
+      <button onclick="showSection('item','#dbffec','#2ecc71')">📦 Add Item</button>
+      <button onclick="showSection('order','#f5e3ff','#8e44ad')">🧾 Order List</button>
+      <button onclick="showSection('admin','#fff3cd','#f39c12')">👤 Add Admin</button>
+    </nav>
+
+    <main>
+      <section id="dashboard" class="card">
+        <h2>Overview</h2>
+        <div class="dashboard-grid">
+          <div class="stat-card">🛒 Orders<br><b>150</b></div>
+          <div class="stat-card">📦 Products<br><b>78</b></div>
+          <div class="stat-card">👥 Customers<br><b>62</b></div>
+          <div class="stat-card">💰 Revenue<br><b>৳ 45,000</b></div>
+        </div>
+      </section>
+
+      <section id="category" class="card" style="display:none">
+        <h2>Add Category</h2>
+        <div class="form-group"><label>Category Name</label><input id="catName" type="text"
+            placeholder="e.g. Electronics" /></div>
+        <div class="form-group"><label>Description</label><input id="catDesc" type="text"
+            placeholder="Short description" /></div>
+        <div class="form-group"><label>Image URL</label><input id="catImg" type="text" placeholder="https://..." />
+        </div>
+        <button class="btn" onclick="addCategory()">Save Category</button>
+        <table id="catTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Image</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section id="item" class="card" style="display:none">
+        <h2>Add Item</h2>
+        <div class="form-group"><label>Item Name</label><input id="itemName" type="text" placeholder="Product name" />
+        </div>
+        <div class="form-group"><label>Category</label>
+          <select id="itemCat">
+            <option>Electronics</option>
+            <option>Clothes</option>
+            <option>Home Decor</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Price (৳)</label><input id="itemPrice" type="number" placeholder="0" /></div>
+        <button class="btn" onclick="addItem()">Add Item</button>
+        <table id="itemTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section id="order" class="card" style="display:none">
+        <h2>Order List</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Customer</th>
+              <th>Item</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="orderBody">
+            <tr>
+              <td>1</td>
+              <td>Ratri</td>
+              <td>Backpack</td>
+              <td>Pending</td>
+              <td class="action-btns"><button class="edit">Edit</button><button class="delete">Delete</button></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Momi</td>
+              <td>Headphones</td>
+              <td>Shipped</td>
+              <td class="action-btns"><button class="edit">Edit</button><button class="delete">Delete</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="admin" class="card" style="display:none">
+        <h2>Add Admin</h2>
+        <div class="form-group"><label>Name</label><input id="adminName" type="text" placeholder="Admin name" /></div>
+        <div class="form-group"><label>Email</label><input id="adminEmail" type="email"
+            placeholder="admin@example.com" /></div>
+        <div class="form-group"><label>Password</label><input id="adminPass" type="password" placeholder="•••••••" />
+        </div>
+        <button class="btn" onclick="addAdmin()">Add Admin</button>
+        <table id="adminTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    function showSection(id, bgColor, accent) {
+      document.querySelectorAll('main section').forEach(sec => sec.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+      document.body.style.background = bgColor;
+      document.documentElement.style.setProperty('--accent', accent);
+    }
+
+    function addCategory() {
+      const name = catName.value.trim(), desc = catDesc.value.trim(), img = catImg.value.trim();
+      if (!name) return alert("Please enter category name");
+      const row = `<tr><td>${name}</td><td>${desc}</td><td><img src="${img}" alt="" width="40"/></td>
+  <td class="action-btns"><button class="edit">Edit</button><button class="delete">Delete</button></td></tr>`;
+      catTable.querySelector("tbody").insertAdjacentHTML('beforeend', row);
+      catName.value = catDesc.value = catImg.value = "";
+    }
+
+    function addItem() {
+      const name = itemName.value.trim(), cat = itemCat.value, price = itemPrice.value.trim();
+      if (!name) return alert("Please enter item name");
+      const row = `<tr><td>${name}</td><td>${cat}</td><td>৳ ${price}</td>
+  <td class="action-btns"><button class="edit">Edit</button><button class="delete">Delete</button></td></tr>`;
+      itemTable.querySelector("tbody").insertAdjacentHTML('beforeend', row);
+      itemName.value = itemPrice.value = "";
+    }
+
+    function addAdmin() {
+      const name = adminName.value.trim(), email = adminEmail.value.trim();
+      if (!name || !email) return alert("Enter admin name & email");
+      const row = `<tr><td>${name}</td><td>${email}</td>
+  <td class="action-btns"><button class="edit">Edit</button><button class="delete">Delete</button></td></tr>`;
+      adminTable.querySelector("tbody").insertAdjacentHTML('beforeend', row);
+      adminName.value = adminEmail.value = adminPass.value = "";
+    }
+
+    // Profile photo preview
+    const uploadPhoto = document.getElementById("uploadPhoto");
+    const preview = document.getElementById("preview");
+    uploadPhoto.addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) { preview.src = e.target.result; }
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+</body>
+
+</html>
