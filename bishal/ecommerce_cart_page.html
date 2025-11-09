@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="bn">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cart — Online Shop </title>
+    <style>
+      :root {
+        --bg: #f4f8f6;
+        --card: #ffffff;
+        --brand: #0ea55f;
+        --muted: #6b7280;
+        --accent: #045c36;
+        --danger: #e53935;
+        --radius: 10px;
+        --shadow: 0 8px 30px rgba(9, 30, 18, 0.06);
+        font-family: "Noto Sans Bengali", Inter, system-ui, -apple-system,
+          "Segoe UI", Roboto, Arial;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: #0b1320;
+      }
+      .wrap {
+        max-width: 1150px;
+        margin: 28px auto;
+        padding: 18px;
+      }
+
+      /* top bar similar feel */
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .logo {
+        width: 46px;
+        height: 46px;
+        border-radius: 8px;
+        background: linear-gradient(180deg, var(--brand), #0b8e48);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 800;
+      }
+      .brand h1 {
+        margin: 0;
+        font-size: 18px;
+      }
+      .search {
+        flex: 1;
+        display: flex;
+        align-items: center;
+      }
+      .search input {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 10px;
+        border: 1px solid #e6efe9;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 20px;
+      }
+
+      .card {
+        background: var(--card);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 18px;
+      }
+
+      /* cart list */
+      .cart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .cart-header h2 {
+        margin: 0;
+      }
+
+      .cart-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .cart-item {
+        display: flex;
+        gap: 14px;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #eefaf2;
+        background: linear-gradient(180deg, #ffffff, #fbfffb);
+      }
+      .cart-item img {
+        width: 96px;
+        height: 96px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+      .item-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .item-title {
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .item-desc {
+        color: var(--muted);
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+      .meta-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .price {
+        font-weight: 800;
+        color: var(--brand);
+      }
+      .qty-controls {
+        display: flex;
+        align-items: center;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #e6efe9;
+      }
+      .qty-controls button {
+        width: 34px;
+        height: 34px;
+        border: 0;
+        background: #fff;
+        cursor: pointer;
+      }
+      .qty-controls input {
+        width: 48px;
+        text-align: center;
+        border: 0;
+      }
+
+      .badge {
+        font-size: 12px;
+        padding: 6px 8px;
+        border-radius: 999px;
+        background: #ecfdf3;
+        color: #065f46;
+      }
+      .remove {
+        background: transparent;
+        border: 0;
+        color: var(--danger);
+        cursor: pointer;
+      }
+
+      /* sticky summary */
+      aside.card {
+        position: sticky;
+        top: 24px;
+        height: fit-content;
+      }
+      .summary h3 {
+        margin: 0 0 10px 0;
+      }
+      .summary .line {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        color: var(--muted);
+      }
+      .summary .total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 12px;
+        border-top: 1px dashed #e6efe9;
+        margin-top: 12px;
+        font-size: 18px;
+      }
+      .checkout {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: 0;
+        background: var(--brand);
+        color: #fff;
+        font-weight: 800;
+        cursor: pointer;
+        margin-top: 12px;
+      }
+
+      .promo {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .promo input {
+        flex: 1;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #e6efe9;
+      }
+      .promo button {
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 0;
+        background: var(--accent);
+        color: #fff;
+        cursor: pointer;
+      }
+
+      .empty {
+        padding: 60px;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      /* responsive */
+      @media (max-width: 980px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        aside.card {
+          position: relative;
+          top: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo">OS</div>
+          <div>
+            <h1>Online Shop</h1>
+            <div style="font-size: 13px; color: var(--muted)">
+              Delivery: Rajshahi — enter postcode at checkout
+            </div>
+          </div>
+        </div>
+        <div class="search">
+          <input placeholder="Find a product — Example: Fresh Tomato" />
+        </div>
+      </div>
+
+      <div class="grid">
+        <main class="card">
+          <div class="cart-header">
+            <h2>Your shopping bag</h2>
+            <div style="color: var(--muted); font-size: 14px">
+              Items: <span id="cart-count">0</span>
+            </div>
+          </div>
+
+          <div id="cart-list" class="cart-list"></div>
+          <div id="empty" class="empty" style="display: none">
+            Oreder Naw
+          </div>
+        </main>
+
+        <aside class="card summary">
+          <h3>Order Summary</h3>
+          <div class="line">
+            <span>Subtotal</span><span id="subtotal">৳0.00</span>
+          </div>
+          <div class="line">
+            <span>Estimated delivery</span><span id="delivery">৳50.00</span>
+          </div>
+          <div class="line">
+            <span>Discount</span><span id="discount">৳0.00</span>
+          </div>
+
+          <div class="promo">
+            <input id="coupon" placeholder="Coupon code (eg: TRY10)" />
+            <button id="apply">Apply</button>
+          </div>
+
+          <div class="total">
+            <strong>Total</strong><strong id="total">৳0.00</strong>
+          </div>
+          <button id="checkout" class="checkout">Checkout</button>
+
+          <div style="margin-top: 12px; font-size: 13px; color: var(--muted)">
+            Payment: Cash on delivery, Card, bKash, Rocket , nagad
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <script>
+      // Demo data inspired by layout of a supermarket-style cart (shwapno-like feel)
+      const demo = [
+        {
+          id: 1,
+          title: "Fresh Tomatoes 1kg",
+          meta: "Local farm",
+          price: 120,
+          qty: 2,
+          img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=200&q=60",
+        },
+        {
+          id: 2,
+          title: "Study Table",
+          meta: "Board",
+          price: 750,
+          qty: 1,
+          img: "https://images.unsplash.com/photo-1593642634443-44adaa06623a?auto=format&fit=crop&w=200&q=60",
+        },
+        {
+          id: 3,
+          title: "Whole Wheat Bread",
+          meta: "500g",
+          price: 80,
+          qty: 3,
+          img: "https://img.freepik.com/premium-photo/appetizing-pieces-fresh-homemade-sourdough-bread-wooden-table_124507-24745.jpg",
+        },
+      ];
+
+      const cartList = document.getElementById("cart-list");
+      const cartCount = document.getElementById("cart-count");
+      const subtotalEl = document.getElementById("subtotal");
+      const discountEl = document.getElementById("discount");
+      const deliveryEl = document.getElementById("delivery");
+      const totalEl = document.getElementById("total");
+      const emptyEl = document.getElementById("empty");
+
+      let cart = JSON.parse(localStorage.getItem("shp-cart")) || demo;
+      let coupon = null;
+
+      function format(n) {
+        return "৳" + n.toFixed(2);
+      }
+
+      function render() {
+        cartList.innerHTML = "";
+        if (!cart || cart.length === 0) {
+          emptyEl.style.display = "block";
+          cartCount.textContent = 0;
+          subtotalEl.textContent = format(0);
+          totalEl.textContent = format(0);
+          discountEl.textContent = format(0);
+          deliveryEl.textContent = format(0);
+          return;
+        }
+        emptyEl.style.display = "none";
+        cartCount.textContent = cart.reduce((s, i) => s + i.qty, 0);
+
+        cart.forEach((item) => {
+          const el = document.createElement("div");
+          el.className = "cart-item";
+          el.innerHTML = `
+          <img src="${item.img}" alt="${item.title}" />
+          <div class="item-body">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div>
+                <div class="item-title">${item.title}</div>
+                <div class="item-desc">${item.meta}</div>
+              </div>
+              <div class="price">${format(item.price * item.qty)}</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+              <div style="display:flex;gap:8px;align-items:center">
+                <div class="qty-controls">
+                  <button class="dec" data-id="${item.id}">-</button>
+                  <input data-id="${item.id}" type="number" min="1" value="${
+            item.qty
+          }" />
+                  <button class="inc" data-id="${item.id}">+</button>
+                </div>
+                <div class="badge">Save ৳${Math.round(item.price * 0.05)}</div>
+              </div>
+              <div>
+                <button class="remove" data-id="${item.id}">Remove</button>
+              </div>
+            </div>
+          </div>
+        `;
+          cartList.appendChild(el);
+        });
+        attach();
+        recalc();
+      }
+
+      function attach() {
+        document.querySelectorAll(".inc").forEach((b) =>
+          b.addEventListener("click", (e) => {
+            changeQty(+e.currentTarget.dataset.id, 1);
+          })
+        );
+        document.querySelectorAll(".dec").forEach((b) =>
+          b.addEventListener("click", (e) => {
+            changeQty(+e.currentTarget.dataset.id, -1);
+          })
+        );
+        document
+          .querySelectorAll(
+            ".qty-controls input, .cart-item input[type=number]"
+          )
+          .forEach((inp) =>
+            inp.addEventListener("change", (e) => {
+              setQty(
+                +e.target.dataset.id,
+                Math.max(1, parseInt(e.target.value) || 1)
+              );
+            })
+          );
+        document.querySelectorAll(".remove").forEach((b) =>
+          b.addEventListener("click", (e) => {
+            removeItem(+e.currentTarget.dataset.id);
+          })
+        );
+      }
+
+      function changeQty(id, delta) {
+        cart = cart.map((i) =>
+          i.id === id ? { ...i, qty: Math.max(1, i.qty + delta) } : i
+        );
+        saveRender();
+      }
+      function setQty(id, v) {
+        cart = cart.map((i) => (i.id === id ? { ...i, qty: v } : i));
+        saveRender();
+      }
+      function removeItem(id) {
+        cart = cart.filter((i) => i.id !== id);
+        saveRender();
+      }
+
+      function recalc() {
+        const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+        const delivery = subtotal > 0 ? 50 : 0;
+        let discount = 0;
+        if (coupon === "TRY10") discount = Math.min(100, subtotal * 0.1);
+        subtotalEl.textContent = format(subtotal);
+        discountEl.textContent = format(discount);
+        deliveryEl.textContent = format(delivery);
+        totalEl.textContent = format(
+          Math.max(0, subtotal + delivery - discount)
+        );
+      }
+
+      function saveRender() {
+        localStorage.setItem("shp-cart", JSON.stringify(cart));
+        render();
+      }
+
+      document.getElementById("apply").addEventListener("click", () => {
+        const code = (document.getElementById("coupon").value || "")
+          .trim()
+          .toUpperCase();
+        if (!code) {
+          alert("কুপন লিখুন");
+          return;
+        }
+        if (code === "TRY10") {
+          coupon = code;
+          alert("10% ছাড় প্রয়োগ (সর্বোচ্চ ৳100)");
+        } else {
+          coupon = null;
+          alert("Invalid coupon");
+        }
+        recalc();
+      });
+
+      document.getElementById("checkout").addEventListener("click", () => {
+        if (!cart || cart.length === 0) {
+          alert("কার্ট খালি।");
+          return;
+        }
+        alert("Checkout শুরু করা হয়েছে — demo mode");
+      });
+
+      render();
+    </script>
+  </body>
+</html>
